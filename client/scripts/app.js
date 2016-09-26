@@ -17,15 +17,28 @@ var escapeHTML = function(string) {
 };
 
 app.init = function(name) {
-  this.name = name;
+  var enterName = prompt('Please Enter Your Name') || 'anonymous';
+  this.name = enterName;
+  console.log('name = ' + enterName);
   this.roomname = 'lobby';
+  $('#sendButton').click(function() {
+    console.log('button clicked!');
+  });
 };
 
-app.send = function(message) {
+app.send = function() {
+  var message;
+  var roomName = document.getElementById('chatroomSelect').value;
+  if (arguments[0] !== undefined) {
+    message = arguments[0];
+  } else {
+    message = document.getElementById('messageText').value;
+  }
+
   var messageObj = {
     username: this.name,
     text: message,
-    roomname: this.roomname
+    roomname: roomName
   };
   $.ajax({
     // This is the url you should use to communicate with the parse API server.
@@ -34,7 +47,7 @@ app.send = function(message) {
     data: JSON.stringify(messageObj),
     contentType: 'application/json',
     success: function (data) {
-      console.log('chatterbox: Message sent');
+      console.log('chatterbox: Message [' + messageObj.text + '] to [' + roomName + '] sent');
     },
     error: function (data) {
       // See: https://developer.mozilla.org/en-US/docs/Web/API/console.error
@@ -53,3 +66,5 @@ app.fetch = function() {
     });
   });
 };
+
+app.init();
