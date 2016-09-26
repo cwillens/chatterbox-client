@@ -11,6 +11,9 @@ var entityMap = {
 };
 
 var escapeHTML = function(string) {
+
+  //return encodeURIComponent(string);
+  
   return String(string).replace(/[&<>"'\/]/g, function (s) {
     return entityMap[s];
   });
@@ -28,7 +31,7 @@ app.init = function(name) {
 
 app.send = function() {
   var message;
-  var roomName = document.getElementById('chatroomSelect').value;
+  var roomName = document.getElementById('chatroomSelect').value || 'lobby';
   if (arguments[0] !== undefined) {
     message = arguments[0];
   } else {
@@ -57,10 +60,13 @@ app.send = function() {
 };
 
 app.fetch = function() {
+  //first remove all messages
+  $('section').remove();
 
-  $.get('https://api.parse.com/1/classes/messages', function(data) {
+  $.get('https://api.parse.com/1/classes/messages?order=-createdAt', function(data) {
     data.results.forEach(function(elem) {
-      var $newNode = $('<div id="' + elem.createdAt + '" class="' + elem.roomname + ' ' + escapeHTML(elem.username) + '">' + escapeHTML(elem.username) + ': ' + escapeHTML(elem.text) + '</div>');
+      //var $newNode = $('<div id="' + elem.createdAt + '" class="' + elem.roomname + ' ' + escapeHTML(elem.username) + '">' + escapeHTML(elem.username) + ': ' + escapeHTML(elem.text) + '</div>');
+      var $newNode = $('<section><div class="username ' + escapeHTML(elem.username) + '">' + escapeHTML(elem.username) + ': </div><div id="' + escapeHTML(elem.createdAt) + '" class="message ' + escapeHTML(elem.username) + ' ' + escapeHTML(elem.roomname) + '">' + escapeHTML(elem.text) + '</div></section>');
       //console.log($newNode);
       $('#chats').append($newNode);
     });

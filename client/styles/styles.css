@@ -63,11 +63,9 @@ form input[type=text] {
     padding: 5px;
     margin-bottom: 5px;
     background-color: #eee;
-}
-
-.chat .username {
     font-weight: 800;
 }
+
 
 .chat:hover {
     background-color: #ddd;
@@ -88,3 +86,14 @@ form input[type=text] {
     background-color: #0090da;
 }
 
+section {
+    padding-bottom:15px;
+}
+
+.username {
+    display: inline;
+}
+
+.message {
+    display: inline;
+}
