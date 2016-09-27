@@ -4,6 +4,8 @@ var App = function() {
 
   app.init = function(name) {
     console.log('initializing');
+    this.friendsList = [];
+    this.roomList = [];
     this.name = (window.location.search.slice(window.location.search.indexOf('=') + 1));
     this.roomname = document.getElementById('chatroomSelect').value;
     var context = this;
@@ -18,10 +20,32 @@ var App = function() {
     $('#sendButton').click(function() {
       context.send();
     });
+
+    $.get('https://api.parse.com/1/classes/messages?order=-createdAt', function(data) {
+      data.results.forEach(function(elem) {
+        if (context.roomList.indexOf(elem.roomname) === -1) {
+          context.roomList.push(elem.roomname);
+          
+        }
+      });
+      console.log('roomlist = ' + context.roomList);
+      context.roomList.forEach(function(elem) {
+        console.log('making option for ' + elem);
+        var $newNode = $('<option value="' + escapeHTML(elem) + '">' + escapeHTML(elem) + '</option>');
+        $('.chatroomSelecter').append($newNode);
+      });
+    });
+    $('#newRoomButton').click(function() {
+      var newRoom = document.getElementById('newRoomText').value;
+      context.roomList.push(newRoom);
+      var $newNode = $('<option value="' + escapeHTML(newRoom) + '">' + escapeHTML(newRoom) + '</option>');
+      $('.chatroomSelecter').append($newNode);
+    });
   };
 
   app.send = function() {
     var message;
+    var context = this;
     if (arguments[0] !== undefined) {
       message = arguments[0];
     } else {
@@ -41,6 +65,7 @@ var App = function() {
       contentType: 'application/json',
       success: function (data) {
         console.log('chatterbox: Message [' + messageObj.text + '] to [' + messageObj.roomname + '] sent');
+        context.fetch();
       },
       error: function (data) {
         // See: https://developer.mozilla.org/en-US/docs/Web/API/console.error
@@ -51,6 +76,7 @@ var App = function() {
 
   app.fetch = function() {
     //first remove all messages
+    console.log('friends list = ' + this.friendsList);
     $('section').remove();
     console.log('this.roomname in fetch = ' + this.roomname);
     var context = this;
@@ -61,13 +87,28 @@ var App = function() {
         if (elem.roomname === context.roomname) {
           console.log('elem.roomname = ' + elem.roomname + ' context.roomname = ' + context.roomname);
           //var $newNode = $('<div id="' + elem.createdAt + '" class="' + elem.roomname + ' ' + escapeHTML(elem.username) + '">' + escapeHTML(elem.username) + ': ' + escapeHTML(elem.text) + '</div>');
-          var $newNode = $('<section><div class="username ' + escapeHTML(elem.username) + '">' + escapeHTML(elem.username) + ': </div><div id="' + escapeHTML(elem.createdAt) + '" class="message ' + escapeHTML(elem.username) + ' ' + escapeHTML(elem.roomname) + '">' + escapeHTML(elem.text) + '</div></section>');
+          if (context.friendsList.indexOf(elem.username) !== -1 ) {
+            //var $newNode = $('<section><div class="username ' + escapeHTML(elem.username) + '">' + escapeHTML(elem.username) + ': </div><div id="' + escapeHTML(elem.createdAt) + '" class="message friend ' + escapeHTML(elem.username) + ' ' + escapeHTML(elem.roomname) + '">' + escapeHTML(elem.text) + '</div></section>');
+            var $newNode1 = $('<div class="username ' + escapeHTML(elem.username) + '">' + escapeHTML(elem.username) + ': </div>');
+            var $newNode2 = $('<div id="' + escapeHTML(elem.createdAt) + '" class="message friend ' + escapeHTML(elem.username) + ' ' + escapeHTML(elem.roomname) + '">' + escapeHTML(elem.text) + '</div>');
+          } else {
+            //var $newNode = $('<section><div class="username ' + escapeHTML(elem.username) + '">' + escapeHTML(elem.username) + ': </div><div id="' + escapeHTML(elem.createdAt) + '" class="message ' + escapeHTML(elem.username) + ' ' + escapeHTML(elem.roomname) + '">' + escapeHTML(elem.text) + '</div></section>');
+            var $newNode1 = $('<div class="username ' + escapeHTML(elem.username) + '">' + escapeHTML(elem.username) + ': </div>');
+            var $newNode2 = $('<div id="' + escapeHTML(elem.createdAt) + '" class="message ' + escapeHTML(elem.username) + ' ' + escapeHTML(elem.roomname) + '">' + escapeHTML(elem.text) + '</div>');
+          }
           //console.log($newNode);
-          $newNode.click(function() {
-            $('.message.' + elem.username).css({'font-weight': '800'});
+          $newNode1.click(function() {
+            //$('.message.' + elem.username).css({'font-weight': '800'});
+            if (context.friendsList.indexOf(elem.username) === -1) {
+              context.friendsList.push(elem.username);
+              $newNode2.addClass('friend');
+              //add friend class to all other of friend's messages
+              $('.' + elem.username + '.message').addClass('friend');
+            }
+            console.log('added ' + elem.username + ' to friends list');
           });
 
-
+          var $newNode = $('<section></section>').append($newNode1).append($newNode2);
           $('#chats').append($newNode);
         }
       });
@@ -95,5 +136,5 @@ var App = function() {
   return app;
 };
 
-var ourApp = App();
-ourApp.init();
+var app = App();
+app.init();

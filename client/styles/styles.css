@@ -81,9 +81,10 @@ form input[type=text] {
     padding: 10px;
 }
 
-.friend {
+section .friend {
     color: #fff;
     background-color: #0090da;
+    font-weight:800;
 }
 
 section {
