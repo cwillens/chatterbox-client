@@ -3,7 +3,7 @@ var App = function() {
   var app = {};
 
   app.init = function(name) {
-    console.log('initializing');
+    
     this.friendsList = [];
     this.roomList = [];
     this.name = (window.location.search.slice(window.location.search.indexOf('=') + 1));
@@ -12,7 +12,6 @@ var App = function() {
     var context = this;
     $('.chatroomSelecter').change(function() {
       context.roomname = document.getElementById('chatroomSelect').value;
-      console.log('chatroom changed to ' + context.roomname);
       context.fetch();
     });
     $('#refreshButton').click(function() {
@@ -21,7 +20,7 @@ var App = function() {
     $('#sendButton').click(function() {
       context.send();
     });
-
+    //populate chatroom selector
     $.get('https://api.parse.com/1/classes/messages?order=-createdAt', function(data) {
       data.results.forEach(function(elem) {
         if (context.roomList.indexOf(elem.roomname) === -1) {
@@ -29,13 +28,12 @@ var App = function() {
           
         }
       });
-      console.log('roomlist = ' + context.roomList);
       context.roomList.forEach(function(elem) {
-        console.log('making option for ' + elem);
         var $newNode = $('<option value="' + escapeHTML(elem) + '">' + escapeHTML(elem) + '</option>');
         $('.chatroomSelecter').append($newNode);
       });
     });
+    //add a new chatroom
     $('#newRoomButton').click(function() {
       var newRoom = document.getElementById('newRoomText').value;
       context.roomList.push(newRoom);
@@ -65,11 +63,9 @@ var App = function() {
       data: JSON.stringify(messageObj),
       contentType: 'application/json',
       success: function (data) {
-        console.log('chatterbox: Message [' + messageObj.text + '] to [' + messageObj.roomname + '] sent');
-        //context.fetch();
+        context.fetch();
       },
       error: function (data) {
-        // See: https://developer.mozilla.org/en-US/docs/Web/API/console.error
         console.error('chatterbox: Failed to send message', data);
       }
     });
@@ -77,55 +73,61 @@ var App = function() {
 
   app.fetch = function() {
     //first remove all messages
-    console.log('friends list = ' + this.friendsList);
+  
     $('section').remove();
-    console.log('this.roomname in fetch = ' + this.roomname);
+
     var context = this;
     //this.roomname = document.getElementById('chatroomSelect').value;
 
     $.get('https://api.parse.com/1/classes/messages?order=-createdAt&' + encodeURI('where={"roomname":"' + context.roomname + '"}'), function(data) {
-      var gotFirst = false;
-      data.results.forEach(function(elem) {
-        if (!gotFirst) {
-          context.lastMessageTime = elem.createdAt;
-          gotFirst = true;
-        }
-        if (elem.roomname === context.roomname) {
-          console.log('elem.roomname = ' + elem.roomname + ' context.roomname = ' + context.roomname);
-          //var $newNode = $('<div id="' + elem.createdAt + '" class="' + elem.roomname + ' ' + escapeHTML(elem.username) + '">' + escapeHTML(elem.username) + ': ' + escapeHTML(elem.text) + '</div>');
-          if (context.friendsList.indexOf(elem.username) !== -1 ) {
-            //var $newNode = $('<section><div class="username ' + escapeHTML(elem.username) + '">' + escapeHTML(elem.username) + ': </div><div id="' + escapeHTML(elem.createdAt) + '" class="message friend ' + escapeHTML(elem.username) + ' ' + escapeHTML(elem.roomname) + '">' + escapeHTML(elem.text) + '</div></section>');
-            var $newNode1 = $('<div class="username ' + escapeHTML(elem.username) + '">' + escapeHTML(elem.username) + ': </div>');
-            var $newNode2 = $('<div id="' + escapeHTML(elem.createdAt) + '" class="message friend ' + escapeHTML(elem.username) + ' ' + escapeHTML(elem.roomname) + '">' + escapeHTML(elem.text) + '</div>');
-          } else {
-            //var $newNode = $('<section><div class="username ' + escapeHTML(elem.username) + '">' + escapeHTML(elem.username) + ': </div><div id="' + escapeHTML(elem.createdAt) + '" class="message ' + escapeHTML(elem.username) + ' ' + escapeHTML(elem.roomname) + '">' + escapeHTML(elem.text) + '</div></section>');
-            var $newNode1 = $('<div class="username ' + escapeHTML(elem.username) + '">' + escapeHTML(elem.username) + ': </div>');
-            var $newNode2 = $('<div id="' + escapeHTML(elem.createdAt) + '" class="message ' + escapeHTML(elem.username) + ' ' + escapeHTML(elem.roomname) + '">' + escapeHTML(elem.text) + '</div>');
-          }
-          //console.log($newNode);
-          $newNode1.click(function() {
-            //$('.message.' + elem.username).css({'font-weight': '800'});
-            if (context.friendsList.indexOf(elem.username) === -1) {
-              context.friendsList.push(elem.username);
-              $newNode2.addClass('friend');
-              //add friend class to all other of friend's messages
-              $('.' + escapeHTML(elem.username) + '.message').addClass('friend');
-            }
-            console.log('added ' + elem.username + ' to friends list');
-          });
-
-          var $newNode = $('<section></section>').append($newNode1).append($newNode2);
-          $('#chats').append($newNode);
-        }
-      });
+      context.renderMessages(data.results);
     });
+
+    //check for unread messages
+    context.checkNewMessages();
+  };
+
+  app.renderMessages = function(messages) {
+    var gotFirst = false;
+    var context = this;
+    messages.forEach(function(elem) {
+      if (!gotFirst) {
+        context.lastMessageTime = elem.createdAt;
+        gotFirst = true;
+      }
+      if (context.friendsList.indexOf(elem.username) !== -1 ) {
+        var $newNode1 = $('<div class="username ' + escapeHTML(elem.username) + '">' + escapeHTML(elem.username) + ': </div>');
+        var $newNode2 = $('<div id="' + escapeHTML(elem.createdAt) + '" class="message friend ' + escapeHTML(elem.username) + ' ' + escapeHTML(elem.roomname) + '">' + escapeHTML(elem.text) + '</div>');
+      } else {
+        var $newNode1 = $('<div class="username ' + escapeHTML(elem.username) + '">' + escapeHTML(elem.username) + ': </div>');
+        var $newNode2 = $('<div id="' + escapeHTML(elem.createdAt) + '" class="message ' + escapeHTML(elem.username) + ' ' + escapeHTML(elem.roomname) + '">' + escapeHTML(elem.text) + '</div>');
+      }
+    
+      $newNode1.click(function() {
+        if (context.friendsList.indexOf(elem.username) === -1) {
+          context.friendsList.push(elem.username);
+          $newNode2.addClass('friend');
+          //add friend class to all other of friend's messages
+          $('.' + escapeHTML(elem.username) + '.message').addClass('friend');
+        }
+   
+      });
+
+      var $newNode = $('<section></section>').append($newNode1).append($newNode2);
+      $('#chats').append($newNode);
+    
+    });
+  };
+
+  app.checkNewMessages = function() {
+    var context = this;
     if (window.unreadInterval) {
       clearInterval(window.unreadInterval);
     }
 
     window.unreadInterval = setInterval(function() {
       window.count = 0;
-      console.log(context.getUnreadMessages());
+      context.getUnreadMessages();
     }, 1000);
   };
 
@@ -163,28 +165,10 @@ var App = function() {
         }
       }
     });
-    return window.count;
+    $('#refreshButton').text('Refresh Messages (' + window.count + ' unread)');
+
   };
-    /*
-    var context = this;
-    //var count = 0;
-    window.count = 0;
-    console.log('lastMessageTime = ' + context.lastMessageTime);
-    $.get('https://api.parse.com/1/classes/messages?order=-createdAt&' + encodeURI('where={"roomname":"' + context.roomname + '"}'), function(data) {
-      //var count = 0;
-      for (var i = 0; i < data.results.length; i++) {
-        if (data.results[i].createdAt === context.lastMessageTime) {
-          break;
-        } else {
-          window.count += 1;
-        }
-      }
-    });
-    return setTimeout(function() {
-      return window.count;
-    }, 1000);
-  };
-  */
+
   return app;
   
 };
