@@ -10,36 +10,36 @@
     <script src="bower_components/jquery/dist/jquery.js"></script>
     <script>
       // YOU DO NOT NEED TO EDIT THIS CODE
-      /*
+      
       if (!/(&|\?)username=/.test(window.location.search)) {
         var newSearch = window.location.search;
         if (newSearch !== '' & newSearch !== '?') {
           newSearch += '&';
         }
         var enterName = prompt('What is your name?');
-        console.log("running from first script "+enterName);
+        console.log('running from first script ' + enterName);
         newSearch += 'username=' + (enterName || 'anonymous');
         window.location.search = newSearch;
       }
-      */
+      
     </script>
     <!-- your scripts -->
     <script src="env/config.js"></script>
-    <script src="scripts/app.js"></script>
   </head>
   <body>
     <div id="main">
       <h1>chatterbox</h1>
       <div id="messageDiv">Enter your Message:<input name="messageBox" id="messageText" type="text">
         <button type="button" id="sendButton" onClick="app.send()">Send Message</button>
-        <select id="chatroomSelect">
+        <select id="chatroomSelect" class="chatroomSelecter">
           <option value="lobby">lobby</option>
           <option value="random">random</option>
           <option value="sports">sports</option>
         </select>
       </div>
-      <button type="button" id="refreshButton" onClick="app.fetch()">Refresh Messages</button>
+      <button type="button" id="refreshButton">Refresh Messages</button>
     </div>
     <div id="chats"></div>
+    <script src="scripts/app.js"></script>
   </body>
 </html>

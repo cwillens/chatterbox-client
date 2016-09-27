@@ -20,18 +20,21 @@ var escapeHTML = function(string) {
 };
 
 app.init = function(name) {
-  var enterName = prompt('Please Enter Your Name') || 'anonymous';
-  this.name = enterName;
-  console.log('name = ' + enterName);
-  this.roomname = 'lobby';
-  $('#sendButton').click(function() {
-    console.log('button clicked!');
+  console.log('initializing');
+  this.name = (window.location.search.slice(window.location.search.indexOf('=') + 1));
+  this.roomname = document.getElementById('chatroomSelect').value;
+  $('.chatroomSelecter').change(function() {
+    this.roomname = document.getElementById('chatroomSelect').value;
+    app.fetch();
+  });
+  var context = this;
+  $('#refreshButton').click(function() {
+    app.fetch();
   });
 };
 
 app.send = function() {
   var message;
-  var roomName = document.getElementById('chatroomSelect').value || 'lobby';
   if (arguments[0] !== undefined) {
     message = arguments[0];
   } else {
@@ -41,7 +44,7 @@ app.send = function() {
   var messageObj = {
     username: this.name,
     text: message,
-    roomname: roomName
+    roomname: this.roomname
   };
   $.ajax({
     // This is the url you should use to communicate with the parse API server.
@@ -50,7 +53,7 @@ app.send = function() {
     data: JSON.stringify(messageObj),
     contentType: 'application/json',
     success: function (data) {
-      console.log('chatterbox: Message [' + messageObj.text + '] to [' + roomName + '] sent');
+      console.log('chatterbox: Message [' + messageObj.text + '] to [' + messageObj.roomname + '] sent');
     },
     error: function (data) {
       // See: https://developer.mozilla.org/en-US/docs/Web/API/console.error
@@ -63,12 +66,18 @@ app.fetch = function() {
   //first remove all messages
   $('section').remove();
 
+  var context = this;
+  this.roomname = document.getElementById('chatroomSelect').value;
+
   $.get('https://api.parse.com/1/classes/messages?order=-createdAt', function(data) {
     data.results.forEach(function(elem) {
-      //var $newNode = $('<div id="' + elem.createdAt + '" class="' + elem.roomname + ' ' + escapeHTML(elem.username) + '">' + escapeHTML(elem.username) + ': ' + escapeHTML(elem.text) + '</div>');
-      var $newNode = $('<section><div class="username ' + escapeHTML(elem.username) + '">' + escapeHTML(elem.username) + ': </div><div id="' + escapeHTML(elem.createdAt) + '" class="message ' + escapeHTML(elem.username) + ' ' + escapeHTML(elem.roomname) + '">' + escapeHTML(elem.text) + '</div></section>');
-      //console.log($newNode);
-      $('#chats').append($newNode);
+      if (elem.roomname === context.roomname) {
+        console.log('elem.roomname = ' + elem.roomname + ' this.roomname = ' + context.roomname);
+        //var $newNode = $('<div id="' + elem.createdAt + '" class="' + elem.roomname + ' ' + escapeHTML(elem.username) + '">' + escapeHTML(elem.username) + ': ' + escapeHTML(elem.text) + '</div>');
+        var $newNode = $('<section><div class="username ' + escapeHTML(elem.username) + '">' + escapeHTML(elem.username) + ': </div><div id="' + escapeHTML(elem.createdAt) + '" class="message ' + escapeHTML(elem.username) + ' ' + escapeHTML(elem.roomname) + '">' + escapeHTML(elem.text) + '</div></section>');
+        //console.log($newNode);
+        $('#chats').append($newNode);
+      }
     });
   });
 };
