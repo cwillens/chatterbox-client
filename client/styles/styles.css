@@ -1,5 +1,5 @@
 body {
-    background: #eee;
+    background: #66e0ff;
     text-align: center;
     padding: 0 25px;
     font-family: arial, sans-serif;
@@ -82,13 +82,18 @@ form input[type=text] {
 }
 
 section .friend {
-    color: #fff;
-    background-color: #0090da;
     font-weight:800;
+    border-color: #8c1aff;
+    border-width: 1px;
+    border-style: solid;
 }
 
 section {
-    padding-bottom:15px;
+    padding-top:8px;
+    padding-bottom:8px;
+    border-style: dashed;
+    border-width: 1px;
+    background-color:#b3ff99;
 }
 
 .username {
@@ -97,4 +102,8 @@ section {
 
 .message {
     display: inline;
+}
+
+.addRoomSpan {
+
 }

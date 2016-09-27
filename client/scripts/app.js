@@ -103,7 +103,7 @@ var App = function() {
               context.friendsList.push(elem.username);
               $newNode2.addClass('friend');
               //add friend class to all other of friend's messages
-              $('.' + elem.username + '.message').addClass('friend');
+              $('.' + escapeHTML(elem.username) + '.message').addClass('friend');
             }
             console.log('added ' + elem.username + ' to friends list');
           });
@@ -121,14 +121,15 @@ var App = function() {
     '>': '&gt;',
     '"': '&quot;',
     "'": '&#39;',
-    '/': '&#x2F;'
+    '/': '&#x2F;',
+    '%': ''
   };
 
   var escapeHTML = function(string) {
 
     //return encodeURIComponent(string);
     
-    return String(string).replace(/[&<>"'\/]/g, function (s) {
+    return String(string).replace(/[&<>"'\/%]/g, function (s) {
       return entityMap[s];
     });
   };
