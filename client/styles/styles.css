@@ -1,18 +1,19 @@
 body {
-    background: #66e0ff;
+    background-image: url('../images/background.jpg');
     text-align: center;
     padding: 0 25px;
     font-family: arial, sans-serif;
 }
 
 #main, #chats {
-    width: 500px;
+    width: 600px;
     margin: auto;
     text-align: left;
-    background: white;
-    padding: 50px 60px;
+    background: transparent;
+    padding: 0px 0px;
     border: solid #ddd;
     border-width: 0 1px 1px 1px;
+    color: white;
 }
 
 #main h1 {
@@ -93,17 +94,54 @@ section {
     padding-bottom:8px;
     border-style: dashed;
     border-width: 1px;
+    border-color: blue;
     background-color:#b3ff99;
+    color: black;
 }
 
 .username {
     display: inline;
+    padding-left: 10px;
+    text-decoration: underline;
 }
 
 .message {
     display: inline;
+    font-size: 9pt;
 }
 
-.addRoomSpan {
+.controls {
+    background-color:;
 
+}
+
+#addRoomSpan, #chatroomSelect{
+    float: right;
+}
+
+button {
+  background: #3498db;
+  background-image: -webkit-linear-gradient(top, #3498db, #2980b9);
+  background-image: -moz-linear-gradient(top, #3498db, #2980b9);
+  background-image: -ms-linear-gradient(top, #3498db, #2980b9);
+  background-image: -o-linear-gradient(top, #3498db, #2980b9);
+  background-image: linear-gradient(to bottom, #3498db, #2980b9);
+  -webkit-border-radius: 15;
+  -moz-border-radius: 15;
+  border-radius: 15px;
+  font-family: Arial;
+  color: #ffffff;
+  font-size: 11px;
+  padding: 7px 12px 7px 12px;
+  text-decoration: none;
+}
+
+button:hover {
+  background: #3cb0fd;
+  background-image: -webkit-linear-gradient(top, #3cb0fd, #3498db);
+  background-image: -moz-linear-gradient(top, #3cb0fd, #3498db);
+  background-image: -ms-linear-gradient(top, #3cb0fd, #3498db);
+  background-image: -o-linear-gradient(top, #3cb0fd, #3498db);
+  background-image: linear-gradient(to bottom, #3cb0fd, #3498db);
+  text-decoration: none;
 }
