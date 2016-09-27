@@ -119,7 +119,11 @@ var App = function() {
         }
       });
     });
-    setInterval(function() {
+    if (window.unreadInterval) {
+      clearInterval(window.unreadInterval);
+    }
+
+    window.unreadInterval = setInterval(function() {
       window.count = 0;
       console.log(context.getUnreadMessages());
     }, 1000);
