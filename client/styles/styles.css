@@ -92,16 +92,16 @@ section .friend {
 section {
     padding-top:8px;
     padding-bottom:8px;
-    border-style: dashed;
+    padding-left: 10px;
+    border-style: none;
     border-width: 1px;
     border-color: blue;
-    background-color:#b3ff99;
-    color: black;
+    background-color: rgba(17, 106, 28, 0.37);
+    color: white;
 }
 
 .username {
     display: inline;
-    padding-left: 10px;
     text-decoration: underline;
 }
 
