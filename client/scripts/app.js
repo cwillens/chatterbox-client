@@ -5,7 +5,7 @@ var App = function() {
   app.init = function(name) {
     
     this.friendsList = [];
-    this.roomList = [];
+    this.roomList = ['lobby'];
     this.name = (window.location.search.slice(window.location.search.indexOf('=') + 1));
     this.roomname = document.getElementById('chatroomSelect').value;
     this.lastMessageTime = -1;
@@ -39,14 +39,16 @@ var App = function() {
     //populate chatroom selector
     $.get('https://api.parse.com/1/classes/messages?order=-createdAt', function(data) {
       data.results.forEach(function(elem) {
+        console.log('roomList = ' + context.roomList);
         if (context.roomList.indexOf(elem.roomname) === -1) {
           context.roomList.push(elem.roomname);
-          
         }
       });
       context.roomList.forEach(function(elem) {
-        var $newNode = $('<option value="' + escapeHTML(elem) + '">' + escapeHTML(elem) + '</option>');
-        $('.chatroomSelecter').append($newNode);
+        if (document.getElementById(elem + 'option') === null) {
+          var $newNode = $('<option id="' + escapeHTML(elem) + 'option" value="' + escapeHTML(elem) + '">' + escapeHTML(elem) + '</option>');
+          $('.chatroomSelecter').append($newNode);
+        }
       });
     });
     //add a new chatroom
@@ -56,7 +58,7 @@ var App = function() {
       var $newNode = $('<option value="' + escapeHTML(newRoom) + '">' + escapeHTML(newRoom) + '</option>');
       $('.chatroomSelecter').append($newNode);
     });
-
+    //context.roomname = 'lobby';
     context.fetch();
   };
 
