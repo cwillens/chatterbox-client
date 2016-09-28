@@ -10,9 +10,23 @@ var App = function() {
     this.roomname = document.getElementById('chatroomSelect').value;
     this.lastMessageTime = -1;
     var context = this;
+    $('#lobbyButton').click(function() {
+      context.roomname = 'lobby';
+      context.fetch();
+    });
+
     $('.chatroomSelecter').change(function() {
       context.roomname = document.getElementById('chatroomSelect').value;
-      context.fetch();
+      //add a button to the tabs panel
+      if (document.getElementById(context.roomname + 'Button') === null) {
+        var $newNode = $('<button type="button" id="' + context.roomname + 'Button" class="tab">' + context.roomname + '</button>');
+        $newNode.click(function() {
+          context.roomname = $newNode.text();
+          context.fetch();
+        });
+        $('#tabs').append($newNode);
+        context.fetch();
+      }
     });
     $('#refreshButton').click(function() {
       context.fetch();

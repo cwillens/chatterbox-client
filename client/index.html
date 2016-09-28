@@ -33,9 +33,6 @@
         <div id="messageDiv">Enter your Message:<input name="messageBox" id="messageText" type="text">
           <button type="button" id="sendButton">Send Message</button>
           You are in:<select id="chatroomSelect" class="chatroomSelecter" width="200px">
-            <option value="lobby">lobby</option>
-            <option value="random">random</option>
-            <option value="sports">sports</option>
           </select>
         </div>
         <button type="button" id="refreshButton">Refresh Messages</button>
@@ -44,7 +41,12 @@
         </span>
       </div>
     </div>
-    <div id="chats"></div>
+    <div id="tabsandchats">
+      <span id="tabs">
+        <button type="button" id="lobbyButton" class="tab">lobby</button>
+      </span>
+      <span id="chats"></span>
+    </div>
     <script src="scripts/app.js"></script>
   </body>
 </html>
