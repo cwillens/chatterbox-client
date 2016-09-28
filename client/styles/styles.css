@@ -168,3 +168,30 @@ button:hover {
 .chatroomSelecter {
     width: 120px;
 }
+
+.tab {
+  background: #a35cb5;
+  background-image: -webkit-linear-gradient(top, #a35cb5, #69c6ff);
+  background-image: -moz-linear-gradient(top, #a35cb5, #69c6ff);
+  background-image: -ms-linear-gradient(top, #a35cb5, #69c6ff);
+  background-image: -o-linear-gradient(top, #a35cb5, #69c6ff);
+  background-image: linear-gradient(to bottom, #a35cb5, #69c6ff);
+  -webkit-border-radius: 8;
+  -moz-border-radius: 8;
+  border-radius: 8px;
+  font-family: Arial;
+  color: #ffffff;
+  font-size: 14px;
+  padding: 5px 8px 5px 8px;
+  text-decoration: none;
+}
+
+.tab:hover {
+  background: #d64d7f;
+  background-image: -webkit-linear-gradient(top, #d64d7f, #557285);
+  background-image: -moz-linear-gradient(top, #d64d7f, #557285);
+  background-image: -ms-linear-gradient(top, #d64d7f, #557285);
+  background-image: -o-linear-gradient(top, #d64d7f, #557285);
+  background-image: linear-gradient(to bottom, #d64d7f, #557285);
+  text-decoration: none;
+}

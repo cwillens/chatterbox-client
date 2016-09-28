@@ -12,6 +12,7 @@ var App = function() {
     var context = this;
     $('#lobbyButton').click(function() {
       context.roomname = 'lobby';
+      $('.chatroomSelecter').val(context.roomname);
       context.fetch();
     });
 
@@ -22,6 +23,7 @@ var App = function() {
         var $newNode = $('<button type="button" id="' + context.roomname + 'Button" class="tab">' + context.roomname + '</button>');
         $newNode.click(function() {
           context.roomname = $newNode.text();
+          $('.chatroomSelecter').val(context.roomname);
           context.fetch();
         });
         $('#tabs').append($newNode);
@@ -54,6 +56,8 @@ var App = function() {
       var $newNode = $('<option value="' + escapeHTML(newRoom) + '">' + escapeHTML(newRoom) + '</option>');
       $('.chatroomSelecter').append($newNode);
     });
+
+    context.fetch();
   };
 
   app.send = function() {
