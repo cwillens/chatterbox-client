@@ -102,10 +102,8 @@ form input[type=text] {
 }
 
 section .friend {
-    font-weight:800;
-    border-color: #8c1aff;
-    border-width: 1px;
-    border-style: solid;
+    font-weight:1000;
+    font-family: cursive;
 }
 
 section {
@@ -127,6 +125,7 @@ section {
 .message {
     display: inline;
     font-size: 9pt;
+    word-wrap:break-word;
 }
 
 .controls {

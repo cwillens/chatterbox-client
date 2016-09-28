@@ -1,4 +1,9 @@
 // YOUR CODE HERE:
+String.prototype.replaceAll = function(search, replacement) {
+  var target = this;
+  return target.replace(new RegExp(search, 'g'), replacement);
+};
+
 var App = function() {
   var app = {};
 
@@ -6,7 +11,7 @@ var App = function() {
     
     this.friendsList = [];
     this.roomList = ['lobby'];
-    this.name = (window.location.search.slice(window.location.search.indexOf('=') + 1));
+    this.name = (window.location.search.slice(window.location.search.indexOf('=') + 1)).replaceAll('%20', ' ');
     this.roomname = document.getElementById('chatroomSelect').value;
     this.lastMessageTime = -1;
     var context = this;
@@ -35,11 +40,11 @@ var App = function() {
     });
     $('#sendButton').click(function() {
       context.send();
+      $('#messageText').val('');
     });
     //populate chatroom selector
     $.get('https://api.parse.com/1/classes/messages?order=-createdAt', function(data) {
       data.results.forEach(function(elem) {
-        console.log('roomList = ' + context.roomList);
         if (context.roomList.indexOf(elem.roomname) === -1) {
           context.roomList.push(elem.roomname);
         }
@@ -57,6 +62,7 @@ var App = function() {
       context.roomList.push(newRoom);
       var $newNode = $('<option value="' + escapeHTML(newRoom) + '">' + escapeHTML(newRoom) + '</option>');
       $('.chatroomSelecter').append($newNode);
+      $('#newRoomText').val('');
     });
     //context.roomname = 'lobby';
     context.fetch();
@@ -115,20 +121,20 @@ var App = function() {
         context.lastMessageTime = elem.createdAt;
         gotFirst = true;
       }
-      if (context.friendsList.indexOf(elem.username) !== -1 ) {
-        var $newNode1 = $('<div class="username ' + escapeHTML(elem.username) + '">' + escapeHTML(elem.username) + ': </div>');
-        var $newNode2 = $('<div id="' + escapeHTML(elem.createdAt) + '" class="message friend ' + escapeHTML(elem.username) + ' ' + escapeHTML(elem.roomname) + '">' + escapeHTML(elem.text) + '</div>');
+      if (context.friendsList.indexOf(escapeHTML(elem.username).replaceAll(' ', '_')) !== -1 ) {
+        var $newNode1 = $('<div class="username ' + escapeHTML(elem.username).replaceAll(' ', '_') + '">' + escapeHTML(elem.username).replaceAll(' ', '_') + ': </div>');
+        var $newNode2 = $('<div id="' + escapeHTML(elem.createdAt) + '" class="message friend ' + escapeHTML(elem.username).replaceAll(' ', '_') + ' ' + escapeHTML(elem.roomname) + '">' + escapeHTML(elem.text) + '</div>');
       } else {
-        var $newNode1 = $('<div class="username ' + escapeHTML(elem.username) + '">' + escapeHTML(elem.username) + ': </div>');
-        var $newNode2 = $('<div id="' + escapeHTML(elem.createdAt) + '" class="message ' + escapeHTML(elem.username) + ' ' + escapeHTML(elem.roomname) + '">' + escapeHTML(elem.text) + '</div>');
+        var $newNode1 = $('<div class="username ' + escapeHTML(elem.username).replaceAll(' ', '_') + '">' + escapeHTML(elem.username).replaceAll(' ', '_') + ': </div>');
+        var $newNode2 = $('<div id="' + escapeHTML(elem.createdAt) + '" class="message ' + escapeHTML(elem.username).replaceAll(' ', '_') + ' ' + escapeHTML(elem.roomname) + '">' + escapeHTML(elem.text) + '</div>');
       }
     
       $newNode1.click(function() {
-        if (context.friendsList.indexOf(elem.username) === -1) {
-          context.friendsList.push(elem.username);
+        if (context.friendsList.indexOf(escapeHTML(elem.username).replaceAll(' ', '_')) === -1) {
+          context.friendsList.push(escapeHTML(elem.username).replaceAll(' ', '_'));
           $newNode2.addClass('friend');
           //add friend class to all other of friend's messages
-          $('.' + escapeHTML(elem.username) + '.message').addClass('friend');
+          $('.message.' + escapeHTML(elem.username).replaceAll(' ', '_')).addClass('friend');
         }
    
       });
@@ -158,14 +164,15 @@ var App = function() {
     '"': '&quot;',
     "'": '&#39;',
     '/': '&#x2F;',
-    '%': ''
+    '%': '',
+    '#': ''
   };
 
   var escapeHTML = function(string) {
 
     //return encodeURIComponent(string);
     
-    return String(string).replace(/[&<>"'\/%]/g, function (s) {
+    return String(string).replace(/[&<>"'\/%#]/g, function (s) {
       return entityMap[s];
     });
   };
